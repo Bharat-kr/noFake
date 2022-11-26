@@ -107,7 +107,7 @@ const AddProduct = () => {
           <div className="" {...getRootProps({ className: "dropzone" })}>
             <input {...getInputProps()} />
             <p>
-              Drag 'n' drop some files here,
+              Drag n drop some files here,
               <br />
               or click to select files
             </p>
