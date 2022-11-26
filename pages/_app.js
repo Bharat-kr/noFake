@@ -1,14 +1,18 @@
 import { useRouter } from "next/router";
 import "../styles/globals.css";
-import Layout from "../utils/Layout";
+import Layout from "../components/Layout";
 import { Toaster } from "react-hot-toast";
 import { Web3Provider } from "../context/Web3Context";
+import Head from "next/head";
 
 function MyApp({ Component, pageProps }) {
   const router = useRouter();
   let isLayout = router.pathname != "/" && router.pathname != "/auth";
   return (
-    <div>
+    <>
+      <Head>
+        <title>NoFake</title>
+      </Head>
       <Toaster />
       <Web3Provider>
         {isLayout ? (
@@ -19,7 +23,7 @@ function MyApp({ Component, pageProps }) {
           <Component {...pageProps} />
         )}
       </Web3Provider>
-    </div>
+    </>
   );
 }
 

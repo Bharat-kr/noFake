@@ -8,9 +8,7 @@ class MyDocument extends Document {
   render() {
     return (
       <Html>
-        <Head>
-          <script src="https://cdn.tailwindcss.com"></script>
-        </Head>
+        <Head></Head>
         <body>
           <Main />
           <NextScript />

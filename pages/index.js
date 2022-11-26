@@ -1,11 +1,28 @@
 import Head from "next/head";
 import { HomepageSaver } from "../assests/HomepageSaver";
+import { useWeb3 } from "../context/Web3Context";
+import { toast } from "react-hot-toast";
 
 export default function Home() {
+  const { setAccount, setConnecting } = useWeb3();
+
+  const getAccount = async (_event) => {
+    setConnecting(true);
+    try {
+      const val = await ethereum.request({ method: "eth_requestAccounts" });
+      if (val.length > 0) {
+        setAccount(val[0]);
+        toast.success("Account Found");
+      }
+    } catch (error) {
+      toast.error(error.message);
+      setConnecting(false);
+    }
+  };
   return (
     <div className="body w-full h-screen">
       <Head>
-        <title>Authentifi</title>
+        <title>NoFake</title>
         <meta
           name="description"
           content="Validate Fake products, powered by Blockchain Technology"
@@ -49,7 +66,10 @@ export default function Home() {
               <button className="inline-flex text-white bg-gray-800 border-0 py-3 px-6 focus:outline-none hover:bg-gray-600 rounded text-lg">
                 Create Account
               </button>
-              <button className="inline-flex ml-4 bg-white text-black border-2 border-black py-3 px-6 rounded text-lg font-semibold">
+              <button
+                className="inline-flex ml-4 bg-white text-black border-2 border-black py-3 px-6 rounded text-lg font-semibold"
+                onClick={getAccount}
+              >
                 Login
               </button>
             </div>

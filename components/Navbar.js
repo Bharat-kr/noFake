@@ -1,7 +1,7 @@
 const Navbar = () => (
   <div className="flex flex-col w-64 h-screen py-8 bg-white border-r dark:bg-gray-800 dark:border-gray-600">
     <h2 className="text-3xl font-semibold text-center text-gray-800 dark:text-white">
-      Authentifi
+      NoFake
     </h2>
     <div className="flex flex-col items-center mt-6 -mx-2">
       <img

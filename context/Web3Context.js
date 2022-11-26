@@ -58,12 +58,10 @@ export const Web3Provider = ({ children }) => {
         if (accounts.length > 0 && ethereum.isConnected()) {
           setAccount(accounts[0]);
           toast.success("Account Found");
-        } else {
-          toast.error("Account Not Found");
         }
       } catch (error) {
         console.error(error);
-        toast.error(error.message);
+        // toast.error(error.message);
       }
     };
 
