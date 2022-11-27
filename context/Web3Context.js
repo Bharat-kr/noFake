@@ -1,6 +1,7 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
 import initWeb3 from "./web3";
 import { toast } from "react-hot-toast";
+import NoFakeFactory from "../smart_contract/artifacts/contracts/NoFake.sol/NoFake.json";
 
 const Web3Context = createContext();
 
@@ -67,15 +68,16 @@ export const Web3Provider = ({ children }) => {
 
     init();
   }, [connected]);
-  // useEffect(() => {
-  //   if (web3) {
-  //     var instance = new web3.eth.Contract(
-  //       BallotFactory.abi,
-  //       "0xB27A86Ad8606bf42AB92753D2EEE6f1d940Bd29B" //deployed factory code
-  //     );
-  //     setFactory(instance);
-  //   }
-  // }, [web3]);
+  useEffect(() => {
+    if (web3) {
+      var instance = new web3.eth.Contract(
+        NoFakeFactory.abi,
+        "0x5FbDB2315678afecb367f032d93F642f64180aa3" //deployed factory code
+      );
+      console.log(instance);
+      setNoFakeInstance(instance);
+    }
+  }, [web3]);
 
   return (
     <Web3Context.Provider
