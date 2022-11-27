@@ -2,9 +2,18 @@ import Head from "next/head";
 import { HomepageSaver } from "../assests/HomepageSaver";
 import { useWeb3 } from "../context/Web3Context";
 import { toast } from "react-hot-toast";
+import { useRouter } from "next/router";
+import { useEffect } from "react";
 
 export default function Home() {
-  const { setAccount, setConnecting } = useWeb3();
+  const { account, setAccount, setConnecting } = useWeb3();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (account) {
+      router.push("/dashboard");
+    }
+  }, [account]);
 
   const getAccount = async (_event) => {
     setConnecting(true);
