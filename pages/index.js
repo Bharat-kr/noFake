@@ -4,6 +4,7 @@ import { useWeb3 } from "../context/Web3Context";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
+import Link from "next/link";
 
 export default function Home() {
   const { account, setAccount, setConnecting } = useWeb3();
@@ -72,9 +73,11 @@ export default function Home() {
               identify fake product.
             </p>
             <div className="flex justify-center">
-              <button className="inline-flex text-white bg-gray-800 border-0 py-3 px-6 focus:outline-none hover:bg-gray-600 rounded text-lg">
-                Create Account
-              </button>
+              <Link href="/auth">
+                <button className="inline-flex text-white bg-gray-800 border-0 py-3 px-6 focus:outline-none hover:bg-gray-600 rounded text-lg">
+                  Create Account
+                </button>
+              </Link>
               <button
                 className="inline-flex ml-4 bg-white text-black border-2 border-black py-3 px-6 rounded text-lg font-semibold"
                 onClick={getAccount}

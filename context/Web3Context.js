@@ -94,6 +94,7 @@ export const Web3Provider = ({ children }) => {
         setWeb3,
         account,
         setAccount,
+        noFakeInstance,
       }}
     >
       {children}
