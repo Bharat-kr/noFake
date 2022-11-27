@@ -2,9 +2,9 @@ require("@nomicfoundation/hardhat-toolbox");
 
 /** @type import('hardhat/config').HardhatUserConfig */
 
-const ALCHEMY_API_KEY = "BOO4QxWVqL12KwK-O_Sbxx66LRKh9FCU";
+const ALCHEMY_API_KEY = "hwjYQ6KR53PF1eXVn6c_RlSm1su7QjfK";
 const GOERLI_PRIVATE_KEY =
-  "ba31ceb20acb06f157bbf5b39c0faf840423816d37274e2d20310a81b41e7b4c";
+  "72243dee323acf5d072dfb423ce58266f66e12add974cb586aeef172469ac656";
 
 module.exports = {
   solidity: "0.8.9",
@@ -16,6 +16,5 @@ module.exports = {
   },
 };
 
-// Contract deployed on address: 0x1f31449ff2175D485F5f1F7055C91cdb1dac995B
-// second version
-// Contract deployed on address: 0xc7BBF1283f5955F53eaE43Dce46EA2C23b68BC90
+// Contract deployed on address: 0x5FbDB2315678afecb367f032d93F642f64180aa3
+

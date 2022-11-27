@@ -1,9 +1,9 @@
 const { ethers } = require("hardhat");
 
 const main = async () => {
-  const AuthentifiFactory = await ethers.getContractFactory("Authentifi");
-  const AuthentifiContract = await AuthentifiFactory.deploy();
-  console.log("Contract deployed on address:", AuthentifiContract.address);
+  const NoFakeFactory = await ethers.getContractFactory("NoFake");
+  const NoFakeContract = await NoFakeFactory.deploy();
+  console.log("Contract deployed on address:", NoFakeContract.address);
 };
 
 main()

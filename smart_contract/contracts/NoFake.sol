@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity ^0.8.0;
 
-contract Authentifi {
+contract NoFake {
     struct Customer {
         string name;
         string type_of;
