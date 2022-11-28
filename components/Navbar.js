@@ -1,6 +1,26 @@
 import Link from "next/link";
+import { useRouter } from "next/router";
+import { useEffect } from "react";
+import { useWeb3 } from "../context/Web3Context";
 
 const Navbar = () => {
+  const router = useRouter();
+
+  const { account, noFakeInstance, user, setUser } = useWeb3();
+  useEffect(() => {
+    const init = async () => {
+      if (account && noFakeInstance) {
+        try {
+          const user = await noFakeInstance.methods.getCustomer(account).call();
+          setUser(user);
+          console.log(user);
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    };
+    init();
+  }, [account, noFakeInstance]);
   return (
     <div className="flex flex-col w-64 h-screen py-8 bg-white border-r dark:bg-gray-800 dark:border-gray-600">
       <h2 className="text-3xl font-semibold text-center text-gray-800 dark:text-white">
@@ -15,14 +35,20 @@ const Navbar = () => {
         <h4 className="mx-2 mt-2 font-medium text-gray-800 dark:text-gray-200 hover:underline">
           John Doe
         </h4>
-        <p className="mx-2 mt-1 text-sm font-medium text-gray-600 dark:text-gray-400 hover:underline">
-          0xB3621F....46421Fe
+        <p className="mx-2 mt-1 text-sm font-medium text-gray-600 dark:text-gray-400 hover:underline w-36 turncate text-ellipsis overflow-hidden">
+          {account}
         </p>
       </div>
       <div className="flex flex-col justify-between flex-1 mt-6">
         <nav>
-          <Link className="cursor-pointer" href="/dashboard">
-            <div className="flex items-center justify-center px-4 py-2 text-gray-700 bg-gray-200 dark:bg-gray-700 dark:text-gray-200">
+          <Link href="/dashboard">
+            <div
+              className={`flex items-center justify-center px-4 py-2 ${
+                router.asPath === "/dashboard"
+                  ? "text-gray-700 bg-gray-200 dark:bg-gray-700 dark:text-gray-200"
+                  : "text-gray-600  dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 dark:hover:text-gray-200 hover:text-gray-700"
+              } cursor-pointer`}
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-6 w-6"
@@ -40,27 +66,41 @@ const Navbar = () => {
               <span className="mx-4 font-medium">All Products</span>
             </div>
           </Link>
-          <Link className="cursor-pointer" href="/addProduct">
-            <div className="flex items-center justify-center px-4 py-2 mt-5 text-gray-600 transition-colors duration-200 transform dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 dark:hover:text-gray-200 hover:text-gray-700">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
+          {user?.type_of === "company" && (
+            <Link href="/addProduct">
+              <div
+                className={`flex items-center justify-center px-4 py-2 my-2 ${
+                  router.asPath === "/addProduct"
+                    ? "text-gray-700 bg-gray-200 dark:bg-gray-700 dark:text-gray-200"
+                    : "text-gray-600  dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 dark:hover:text-gray-200 hover:text-gray-700"
+                } cursor-pointer`}
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-              <span className="mx-4 font-medium">Add Product</span>
-            </div>
-          </Link>
-          <Link className="cursor-pointer" href="/transferProduct">
-            <div className="flex items-center justify-center px-4 py-2 mt-5 text-gray-600 transition-colors duration-200 transform dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 dark:hover:text-gray-200 hover:text-gray-700">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                <span className="mx-4 font-medium">Add Product</span>
+              </div>
+            </Link>
+          )}
+          <Link href="/transferProduct">
+            <div
+              className={`flex items-center justify-center px-4 py-2 my-2 ${
+                router.asPath === "/transferProduct"
+                  ? "text-gray-700 bg-gray-200 dark:bg-gray-700 dark:text-gray-200"
+                  : "text-gray-600  dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 dark:hover:text-gray-200 hover:text-gray-700"
+              } cursor-pointer`}
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-5 w-5"
@@ -72,8 +112,14 @@ const Navbar = () => {
               <span className="mx-4 font-medium">Transfer Ownership</span>
             </div>
           </Link>
-          <Link href="/validateProduct" className="cursor-pointer">
-            <div className="flex items-center justify-center px-4 py-2 mt-5 text-gray-600 transition-colors duration-200 transform dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 dark:hover:text-gray-200 hover:text-gray-700">
+          <Link href="/validateProduct">
+            <div
+              className={`flex items-center justify-center px-4 py-2 ${
+                router.asPath === "/validateProduct"
+                  ? "text-gray-700 bg-gray-200 dark:bg-gray-700 dark:text-gray-200"
+                  : "text-gray-600  dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 dark:hover:text-gray-200 hover:text-gray-700"
+              } cursor-pointer`}
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-6 w-6"
@@ -91,26 +137,28 @@ const Navbar = () => {
               <span className="mx-4 font-medium">Validate Product</span>
             </div>
           </Link>
-          <a
-            className="flex items-center justify-center px-4 py-2 mt-40 text-gray-600 hover:text-red-500"
-            href="#"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth="2"
+          <Link href="/">
+            <div
+              div
+              className="flex items-center justify-center px-4 py-2 text-gray-600 hover:text-red-500 cursor-pointer"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-              />
-            </svg>
-            <span className="mx-4 font-medium">Logout</span>
-          </a>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                />
+              </svg>
+              <span className="mx-4 font-medium">Logout</span>
+            </div>
+          </Link>
         </nav>
       </div>
     </div>

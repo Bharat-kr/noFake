@@ -7,11 +7,12 @@ const Web3Context = createContext();
 
 export const Web3Provider = ({ children }) => {
   const [web3, setWeb3] = useState(null);
-  const [account, setAccount] = useState(null);
+  const [account, setAccount] = useState("");
   const [doneCheckingForMetaMask, setDoneCheckingForMetaMask] = useState(false);
   const [connected, setConnected] = useState(false);
   const [connecting, setConnecting] = useState(false);
   const [isGoerliChain, setIsGoerliChain] = useState(false);
+  const [user, setUser] = useState({});
   const [noFakeInstance, setNoFakeInstance] = useState(null);
 
   useEffect(() => {
@@ -72,7 +73,7 @@ export const Web3Provider = ({ children }) => {
     if (web3) {
       var instance = new web3.eth.Contract(
         NoFakeFactory.abi,
-        "0x5FbDB2315678afecb367f032d93F642f64180aa3" //deployed factory code
+        "0x6f95090c39E443c8C308b6DD4444aA608F870710" //deployed factory code
       );
       console.log(instance);
       setNoFakeInstance(instance);
@@ -95,6 +96,8 @@ export const Web3Provider = ({ children }) => {
         account,
         setAccount,
         noFakeInstance,
+        user,
+        setUser,
       }}
     >
       {children}

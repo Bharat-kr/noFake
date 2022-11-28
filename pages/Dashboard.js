@@ -1,13 +1,68 @@
-import React from 'react'
+import React, { useEffect, useState } from "react";
+import { useWeb3 } from "../context/Web3Context";
 
 const Dashboard = () => {
+  const { noFakeInstance } = useWeb3();
+  const [allProducts, setAllProducts] = useState([
+    { name: "bharat", type: "Mobiles" },
+    {
+      name: "keshav",
+    },
+  ]);
+  const [products, setProducts] = useState([]);
+  const [search, setSearch] = useState("");
+  const [filter, setFilter] = useState("");
+  const [show, setShow] = useState(false);
+
+  useEffect(() => {
+    if (filter) {
+      setProducts(
+        products.filter((item) => {
+          return (
+            item.name.toLowerCase().includes(search.toLowerCase()) &&
+            item.type === filter
+          );
+        })
+      );
+    } else {
+      setProducts(
+        products.filter((item) => {
+          return item.name.toLowerCase().includes(search.toLocaleLowerCase());
+        })
+      );
+    }
+  }, [search, filter]);
+
+  console.log(products);
+
+  useEffect(() => {
+    const init = async () => {
+      try {
+        const p = await noFakeInstance.methods.getAllProducts().call();
+        setAllProducts(products);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    init();
+  }, []);
+  const changeFilter = (val) => {
+    setFilter(val);
+    setShow(false);
+  };
+
   return (
     <div>
       <section className="flex flex-col m-2 ">
         {/* header section start here */}
         <div className="flex justify-around w-full">
           <h1 className="w-full text-3xl font-bold">All Prodcuts</h1>
-          <button className="flex items-center justify-center w-full px-10 py-2 text-white transition-colors duration-200 transform bg-black rounded-md focus:outline-none sm:w-auto sm:mx-1 hover:bg-black focus:bg-black focus:ring focus:ring-black focus:ring-opacity-40">
+          <button
+            className="relative flex items-center justify-center w-full px-10 py-2 text-white transition-colors duration-200 transform bg-black rounded-md focus:outline-none sm:w-auto sm:mx-1 hover:bg-black focus:bg-black focus:ring focus:ring-black focus:ring-opacity-40"
+            onClick={() => {
+              setShow((prev) => !prev);
+            }}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-6 w-6"
@@ -23,6 +78,34 @@ const Dashboard = () => {
               />
             </svg>
             <span className="mx-1">Filter</span>
+            {show && (
+              <div className="absolute flex-col z-[10] right-0 top-12 bg-slate-900 rounded cursor-pointer w-full">
+                <div
+                  className="w-full text-center px-4 py-2 hover:bg-slate-500 rounded-t text-white"
+                  onClick={() => {
+                    changeFilter("Mobiles");
+                  }}
+                >
+                  Mobiles
+                </div>
+                <div
+                  className="w-full text-center px-4 py-2 hover:bg-slate-500 text-white"
+                  onClick={() => {
+                    changeFilter("Laptops");
+                  }}
+                >
+                  Laptops
+                </div>
+                <div
+                  className="w-full text-center px-4 py-2 hover:bg-slate-500 rounded-b text-white"
+                  onClick={() => {
+                    changeFilter("TVs");
+                  }}
+                >
+                  TVs
+                </div>
+              </div>
+            )}
           </button>
         </div>
         {/* header section end here */}
@@ -51,6 +134,10 @@ const Dashboard = () => {
                 <input
                   type="text"
                   className="w-full py-3 pl-10 pr-4 text-gray-700 bg-white border border-1 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-800 focus:border-black dark:focus:border-black focus:outline-none"
+                  value={search}
+                  onChange={(e) => {
+                    setSearch(e.target.value);
+                  }}
                   placeholder="Type products name or code..."
                 />
               </div>
@@ -62,7 +149,7 @@ const Dashboard = () => {
           <div className="w-1/4"></div> */}
       </section>
     </div>
-  )
-}
+  );
+};
 
-export default Dashboard
+export default Dashboard;

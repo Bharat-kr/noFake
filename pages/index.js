@@ -7,7 +7,7 @@ import { useEffect } from "react";
 import Link from "next/link";
 
 export default function Home() {
-  const { account, setAccount, setConnecting } = useWeb3();
+  const { account, setAccount, setConnecting, noFakeInstance } = useWeb3();
   const router = useRouter();
 
   useEffect(() => {

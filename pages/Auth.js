@@ -3,6 +3,7 @@ import { useWeb3 } from "../context/Web3Context";
 import { v4 as uuidv4 } from "uuid";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/router";
+import { id } from "ethers/lib/utils";
 
 const Auth = () => {
   const { noFakeInstance, setAccount } = useWeb3();
@@ -19,17 +20,33 @@ const Auth = () => {
       const val = await ethereum.request({ method: "eth_requestAccounts" });
       if (val.length > 0) {
         console.log(val[0], naccount);
-        await noFakeInstance.methods
-          .createCustomer(name, isCustomer, phoneNo, naccount, naccount)
-          .send({
-            from: naccount,
-          })
-          .on("receipt", function (receipt) {
-            setAccount(naccount);
-
-            toast.success(`Transaction completed. ${receipt.transactionHash}`);
-            router.push('/dashboard')
-          });
+        if (isCustomer === "customer") {
+          await noFakeInstance.methods
+            .createCustomer(name, isCustomer, phoneNo, naccount, naccount)
+            .send({
+              from: naccount,
+            })
+            .on("receipt", function (receipt) {
+              setAccount(naccount);
+              toast.success(
+                `Transaction completed. ${receipt.transactionHash}`
+              );
+              router.push("/dashboard");
+            });
+        } else {
+          await noFakeInstance.methods
+            .createManufacturer(name, isCustomer, phoneNo, naccount, naccount)
+            .send({
+              from: naccount,
+            })
+            .on("receipt", function (receipt) {
+              setAccount(naccount);
+              toast.success(
+                `Transaction completed. ${receipt.transactionHash}`
+              );
+              router.push("/dashboard");
+            });
+        }
       } else {
         toast.error("Enter correct Address");
       }

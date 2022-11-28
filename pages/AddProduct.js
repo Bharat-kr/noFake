@@ -1,8 +1,46 @@
-import React from "react";
+import React, { useState } from "react";
 import { useDropzone } from "react-dropzone";
+import { v4 as uuidv4 } from "uuid";
+import { useWeb3 } from "../context/Web3Context";
 
 const AddProduct = () => {
   const { acceptedFiles, getRootProps, getInputProps } = useDropzone();
+
+  const { account, noFakeInstance } = useWeb3();
+  const [name, setName] = useState("");
+  const [productNo, setProductNo] = useState("");
+  const [ownersAddress, setOwnersAddress] = useState("");
+  const [issuersAddress, setIssuersAddress] = useState("");
+  const [issuersName, setIssuersName] = useState("");
+  const [country, setCountry] = useState("US");
+  const [loading, setLoading] = useState(false);
+
+  const registerProduct = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      await noFakeInstance.methods
+        .registerProduct(uuidv4(), name, ownersAddress, type, true)
+        .send({
+          from: account,
+        })
+        .on("receipt", function (receipt) {
+          toast.success(
+            `Transaction completed. ${receipt.transactionHash.slice(0, 10)}...`
+          );
+          setName("");
+          setProductNo("");
+          setIssuersAddress("");
+          setIssuersAddress("");
+          setIssuersName("");
+          setCountry("");
+        });
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      console.log(error);
+    }
+  };
 
   return (
     <div>
@@ -17,50 +55,82 @@ const AddProduct = () => {
             type="text"
             id="name"
             name="name"
+            value={name}
+            onChange={(e) => {
+              setName(e.target.value);
+            }}
             className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
           />
         </div>
 
         <div className="flex mb-4">
           <div className="relative mb-4 mr-5 w-1/5">
-            <label htmlFor="name" className="leading-7 text-md text-gray-600">
+            <label
+              htmlFor="productNo"
+              className="leading-7 text-md text-gray-600"
+            >
               Product No.
             </label>
             <input
               type="text"
-              id="name"
-              name="name"
+              id="productNo"
+              name="productNo"
+              value={productNo}
+              onChange={(e) => {
+                setProductNo(e.target.value);
+              }}
               className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
             />
           </div>
 
           <div className="relative mb-4 w-1/3 flex flex-col mr-5">
-            <label htmlFor="name" className="leading-7 text-md text-gray-600">
+            <label
+              htmlFor="ownerAddress"
+              className="leading-7 text-md text-gray-600"
+            >
               Owner Address
             </label>
             <input
               type="text"
-              id="name"
-              name="name"
+              id="ownerAddress"
+              name="ownerAddress"
+              value={ownersAddress}
+              onChange={(e) => {
+                setOwnersAddress(e.target.value);
+              }}
               className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
             />
             <div>
               <input
                 type="checkbox"
                 className="border-gray-300 rounded mr-3 mt-2"
+                onChange={(e) => {
+                  if (e.target.checked == true) {
+                    setOwnersAddress(account);
+                  } else {
+                    setOwnersAddress("");
+                  }
+                }}
               />
               <span className="text-slate-600">Same as current Owner</span>
             </div>
           </div>
 
           <div className="relative mb-4 mr-5 w-2/5">
-            <label htmlFor="name" className="leading-7 text-md text-gray-600">
+            <label
+              htmlFor="issuersAddress"
+              className="leading-7 text-md text-gray-600"
+            >
               Issuers Address
             </label>
             <input
               type="text"
-              id="name"
-              name="name"
+              id="issuersAddress"
+              name="issuersAddress"
+              value={issuersAddress}
+              onChange={(e) => {
+                setIssuersAddress(e.target.value);
+              }}
               className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
             />
           </div>
@@ -68,13 +138,20 @@ const AddProduct = () => {
 
         <div className="flex mb-4">
           <div className="relative mb-4 mr-5 w-2/5">
-            <label htmlFor="name" className="leading-7 text-md text-gray-600">
+            <label
+              htmlFor="issuersName"
+              className="leading-7 text-md text-gray-600"
+            >
               Issuers Name
             </label>
             <input
               type="text"
-              id="name"
-              name="name"
+              id="issuersName"
+              name="issuersName"
+              value={issuersName}
+              onChange={(e) => {
+                setIssuersName(e.target.value);
+              }}
               className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
             />
           </div>
@@ -89,6 +166,10 @@ const AddProduct = () => {
               </label>
               <select
                 id="countries"
+                value={country}
+                onChange={(e) => {
+                  setCountry(e.target.value);
+                }}
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
               >
                 <option selected>Choose a country</option>
@@ -103,7 +184,7 @@ const AddProduct = () => {
         <span className="leading-7 text-md text-gray-600">
           Upload Certificates and Images
         </span>
-        <section className="container w-full h-40 mt-3 rounded-lg hover:border-dotted hover:border-teal-400 hover:border-4 text-gray-500 text-center bg-slate-100 flex justify-center items-center">
+        <section className="container w-full h-40 my-3 rounded-lg hover:border-dotted hover:border-teal-400 hover:border-4 text-gray-500 text-center bg-slate-100 flex justify-center items-center">
           <div className="" {...getRootProps({ className: "dropzone" })}>
             <input {...getInputProps()} />
             <p>
@@ -127,6 +208,35 @@ const AddProduct = () => {
             </svg>
           </div>
         </section>
+        <button
+          type="submit"
+          className="bg-black rounded-lg text-white hover:bg-gray-800 hover:text-grey-600 py-4 w-full flex justify-center items-center"
+          onClick={registerProduct}
+          disabled={loading}
+        >
+          {loading && (
+            <span className="mr-3 font-semibold leading-7">Registering...</span>
+          )}
+          {!loading && (
+            <>
+              <span className="mr-3 font-semibold leading-7">Register</span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="w-6 h-6 -rotate-45"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5"
+                />
+              </svg>
+            </>
+          )}
+        </button>
       </form>
     </div>
   );
