@@ -66,7 +66,7 @@ const Navbar = () => {
               <span className="mx-4 font-medium">All Products</span>
             </div>
           </Link>
-          {user?.type_of === "company" && (
+          {/* {user?.type_of === "company" && ( */}
             <Link href="/addProduct">
               <div
                 className={`flex items-center justify-center px-4 py-2 my-2 ${
@@ -92,7 +92,7 @@ const Navbar = () => {
                 <span className="mx-4 font-medium">Add Product</span>
               </div>
             </Link>
-          )}
+          {/* )} */}
           <Link href="/transferProduct">
             <div
               className={`flex items-center justify-center px-4 py-2 my-2 ${

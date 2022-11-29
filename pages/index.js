@@ -39,7 +39,7 @@ export default function Home() {
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <header className="text-gray-600 body-font mx-10">
+      <header className="text-gray-600 body-font mx-10 flex items-center">
         <div className="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">
           <a className="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0">
             <svg
@@ -54,8 +54,26 @@ export default function Home() {
             >
               <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
             </svg>
-            <span className="ml-3 text-xl">Authentifi</span>
+            <span className="ml-3 text-xl">NoFake</span>
           </a>
+        </div>
+
+        <div className="w-44 md:w-32">
+          <div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+            <input
+              type="checkbox"
+              name="toggle"
+              id="toggle"
+              class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"
+            />
+            <label
+              for="toggle"
+              class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"
+            ></label>
+          </div>
+          <label for="toggle" class="text-xs text-gray-700">
+            Dark Mode
+          </label>
         </div>
       </header>
 

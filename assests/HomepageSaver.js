@@ -1,8 +1,9 @@
 export const HomepageSaver = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width="530.98435"
-    height="590.2962"
+    // width="530.98435"
+    // height="590.2962"
+    className="h-full w-full"
     viewBox="0 0 564.98435 512.2962"
     xmlnsXlink="http://www.w3.org/1999/xlink"
   >
