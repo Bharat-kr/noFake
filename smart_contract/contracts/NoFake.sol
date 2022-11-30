@@ -2,133 +2,95 @@
 pragma solidity ^0.8.0;
 
 contract NoFake {
-    struct Customer {
+    struct User {
+        address uuid;
         string name;
         string type_of;
         string phone_number;
         address account_address;
-        string uuid;
-    }
-
-    struct Manufactuer {
-        string uuid;
-        string name;
-        string location_address;
-        address manufactuer_address;
-        string phone_number;
     }
 
     struct Products {
         string uuid;
         string name;
-        address owner;
-        string manufacturer;
+        address owner;//will be the customer id who has bought it
+        string manufacturer;//will be the custormer Id who has created that product
         address[] previous_owners;
-        address listed_by;
-        string type_of;
+        string lister_name;
+        string lister_country;
+        address listed_by;//first time address
+        string type_of;//Either Mobile , TV or Laptop
         string[] product_images;
-        bool is_antique;
-        string[] product_certificates;
         bool isVerified;
     }
 
-    mapping(string => Customer) customer_db;
+    mapping(address => User) user_db;
     mapping(string => Products) product_db;
-    mapping(string => Manufactuer) manufacturer_db;
+    Products[] AllProducts;
 
-    function createCustomer(
+    function createUser(
         string memory _name, 
         string memory _type_of, 
         string memory _phone_no, 
-        address _account_address, 
-        string memory _uuid
+        address _account_address
         ) 
         public payable returns(uint) {
-            Customer memory newCustomer;
-            newCustomer.name = _name;
-            newCustomer.type_of = _type_of;
-            newCustomer.phone_number = _phone_no;
-            newCustomer.account_address = _account_address;
-
-            customer_db[_uuid] = newCustomer;
+            User memory newUser;
+            newUser.name = _name;
+            newUser.type_of = _type_of;
+            newUser.phone_number = _phone_no;
+            newUser.account_address = _account_address;
+            user_db[_account_address] = newUser;
             return 1;
     }
 
-    function getCustomer(
-        string memory _uuid
+    function getUser(
+        address _address
     ) view public returns(string memory, string memory, string memory, address){
         return(
-            customer_db[_uuid].name, 
-            customer_db[_uuid]. type_of, 
-            customer_db[_uuid].phone_number, 
-            customer_db[_uuid].account_address
+            user_db[_address].name, 
+            user_db[_address]. type_of, 
+            user_db[_address].phone_number, 
+            user_db[_address].account_address
         );
     }
-
-    function registerManufacturer(
-        string memory _name,
-        string memory _location,
-        string memory _uuid,
-        address _manufacturer_address,
-        string memory _phone_no
-    ) public payable returns(uint) {
-        Manufactuer memory newManufacturer;
-        newManufacturer.name = _name;
-        newManufacturer.location_address = _location;
-        newManufacturer.manufactuer_address = _manufacturer_address;
-        newManufacturer.phone_number = _phone_no;
-        manufacturer_db[_uuid] = newManufacturer;
-        return 1;
-    }
-
-    function getManufactuer(
-        string memory _uuid
-    ) view public returns (
-        string memory,
-        string memory,
-        string memory,
-        address,
-        string memory
-    ) {
-        return(
-            manufacturer_db[_uuid].uuid,
-            manufacturer_db[_uuid].name,
-            manufacturer_db[_uuid].location_address,
-            manufacturer_db[_uuid].manufactuer_address,
-            manufacturer_db[_uuid].phone_number
-        );
-    }
-
 
     function registerProduct(
         string memory _uuid,
         string memory _name,
+        address _owner,
         string memory _manufacturer,
+        address _lister_addresss,
         string memory _type_of,
-        bool _is_antique
+        string memory _lister_name,
+        string memory _lister_country
     ) public payable returns(uint) {
         Products memory newProduct;
+        newProduct.uuid = _uuid;
         newProduct.name = _name;
+        newProduct.owner = _owner;
         newProduct.manufacturer = _manufacturer;
         newProduct.type_of = _type_of;
-        newProduct.is_antique = _is_antique;
-        newProduct.isVerified = true;
+        newProduct.listed_by= _lister_addresss;
+        newProduct.lister_name=_lister_name;
+        newProduct.lister_country=_lister_country;
+        newProduct.isVerified = false;
         product_db[_uuid] = newProduct;
+        AllProducts.push(newProduct);
         return 1;
     }
 
-
-
     function getProduct(string memory _uuid) public view returns (
-        string memory, 
-        address,
-        string memory,
-        address[] memory,
-        address,
-        string memory,
-        string[] memory,
-        bool, 
-        string[] memory
+      string memory,
+      address,
+      string memory,
+      address[] memory,
+      string memory,
+      string memory,
+      address,
+      string memory,
+      string[] memory,
+      bool
     ){
         Products memory prod = product_db[_uuid];
         return(
@@ -136,22 +98,41 @@ contract NoFake {
             prod.owner,
             prod.manufacturer,
             prod.previous_owners,
+            prod.lister_name,
+            prod.lister_country,
             prod.listed_by,
             prod.type_of,
             prod.product_images,
-            prod.is_antique,
-            prod.product_certificates
+            prod.isVerified
         );
     }
 
-    function uploadDocuments(
-        string memory _uuid, 
-        string[] memory _product_certificates
-    ) payable public returns(uint) {
-        require(product_db[_uuid].isVerified);
-        product_db[_uuid].product_certificates = _product_certificates;
-        return 1;
+    function getAllProducts()public view returns(Products[] memory){
+        return AllProducts;
     }
 
+    function transferOwnerShip(string memory _product_uuid , address _newOwner )public payable returns(Products memory){
+        Products memory prod = product_db[_product_uuid];
+        require(msg.sender == prod.owner, "Only Owner can change this!");
+        prod.isVerified = false;
+        prod.owner= _newOwner;
+        Products memory newProduct = prod;
+        delete prod;
+        product_db[_product_uuid] = newProduct;
+        return (
+            prod
+        );
+    }
+
+    function validateProduct(string memory _product_uuid , string memory _manufacturer_id)public payable returns(string memory){
+        Products memory prod = product_db[_product_uuid];
+        require(keccak256(abi.encodePacked(prod.manufacturer)) == keccak256(abi.encodePacked(_manufacturer_id)), "Incorrect Manufacturer");
+        require(prod.isVerified == false , "Product is already Verified");
+        prod.isVerified = true;
+        prod.owner = msg.sender;
+        product_db[_product_uuid] = prod;
+    
+        return "You are not Authorized";
+    }
 }
 
