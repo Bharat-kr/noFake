@@ -35,10 +35,6 @@ const Dashboard = () => {
     };
     init();
   }, [noFakeInstance]);
-  const changeFilter = (val) => {
-    setFilter(val);
-    setShow(false);
-  };
 
   return (
     <div>
@@ -46,10 +42,10 @@ const Dashboard = () => {
         {/* header section start here */}
         <div className="flex justify-around w-full items-center">
           <h1 className="w-full text-3xl font-bold">All Prodcuts</h1>
-          <button
+          {/* <button
             className="relative flex items-center justify-center w-full px-0 md:px-8 py-2 text-white transition-colors duration-200 transform bg-black rounded-md h-fit focus:outline-none sm:w-auto sm:mx-1 hover:bg-black focus:bg-black focus:ring focus:ring-black focus:ring-opacity-40"
             onClick={() => {
-              setShow((prev) => !prev);
+              setShow(true);
             }}
           >
             <svg
@@ -72,30 +68,34 @@ const Dashboard = () => {
                 <div
                   className="w-full text-center px-4 py-2 hover:bg-slate-500 rounded-t text-white"
                   onClick={() => {
-                    changeFilter("Mobile");
+                    setFilter("Mobile");
+                    setShow(false);
                   }}
                 >
-                  Mobiles
+                  Mobile
                 </div>
                 <div
                   className="w-full text-center px-4 py-2 hover:bg-slate-500 text-white"
                   onClick={() => {
-                    changeFilter("Laptop");
+                    console.log("here");
+                    setFilter("Laptop");
+                    setShow(false);
                   }}
                 >
-                  Laptops
+                  Laptop
                 </div>
                 <div
                   className="w-full text-center px-4 py-2 hover:bg-slate-500 rounded-b text-white"
                   onClick={() => {
-                    changeFilter("TV");
+                    setShow(false);
+                    setFilter("TV");
                   }}
                 >
-                  TVs
+                  TV
                 </div>
               </div>
             )}
-          </button>
+          </button> */}
         </div>
         {/* header section end here */}
         {/* ----------------------------------------------------- */}

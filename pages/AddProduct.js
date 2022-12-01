@@ -1,19 +1,16 @@
 import React, { useState } from "react";
-import { useDropzone } from "react-dropzone";
 import toast from "react-hot-toast";
 import { v4 as uuidv4 } from "uuid";
 import { useWeb3 } from "../context/Web3Context";
 
 const AddProduct = () => {
-  const { getRootProps, getInputProps } = useDropzone();
-
   const { account, noFakeInstance } = useWeb3();
   const [name, setName] = useState("");
   const [productNo, setProductNo] = useState(uuidv4());
   const [ownersAddress, setOwnersAddress] = useState("");
   const [type, setType] = useState("");
   const [issuersName, setIssuersName] = useState("");
-  const [country, setCountry] = useState("US");
+  const [country, setCountry] = useState("IN");
   const [loading, setLoading] = useState(false);
 
   const registerProduct = async (e) => {
@@ -38,14 +35,16 @@ const AddProduct = () => {
           // toast.success(
           //   `Transaction completed. ${receipt.transactionHash.slice(0, 10)}...`
           // );
+          toast.success("Product Added");
           setName("");
-          setProductNo("");
+          setProductNo(uuidv4());
           setIssuersAddress("");
-          setIssuersAddress("");
+          setIssuersName("");
+          setType("");
+          setOwnersAddress("");
           setIssuersName("");
           setCountry("");
         });
-      toast.success("Product Added");
       setLoading(false);
     } catch (error) {
       setLoading(false);
@@ -174,7 +173,7 @@ const AddProduct = () => {
           <div className="relative mb-4 mr-5 w-2/5">
             <div>
               <label
-                hhtmlFor="countries"
+                htmlFor="countries"
                 className="leading-7 text-md text-gray-600"
               >
                 Country
@@ -188,6 +187,7 @@ const AddProduct = () => {
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
               >
                 <option selected>Choose a country</option>
+                <option value="IN">India</option>
                 <option value="US">United States</option>
                 <option value="CA">Canada</option>
                 <option value="FR">France</option>
