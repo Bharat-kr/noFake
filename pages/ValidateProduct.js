@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import toast from "react-hot-toast";
 import { useWeb3 } from "../context/Web3Context";
 
 const ValidateProduct = () => {
@@ -13,7 +14,7 @@ const ValidateProduct = () => {
     if (productID && manufacturerAddress) {
       try {
         await noFakeInstance.methods
-          .transferProduct(productID, manufacturerAddress)
+          .validateProduct(productID, manufacturerAddress)
           .send({
             from: account,
           })
@@ -24,13 +25,15 @@ const ValidateProduct = () => {
                 10
               )}...`
             );
+            toast.success("Product Validated");
             setProductId("");
             setManufacturerAddress("");
           });
-        setLoading(true);
+        setLoading(false);
       } catch (error) {
         console.log(error);
-        setLoading(true);
+        toast.error("Something went wrong");
+        setLoading(false);
       }
     }
   };

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import toast from "react-hot-toast";
 import { useWeb3 } from "../context/Web3Context";
 
 const TransferProduct = () => {
@@ -10,10 +11,10 @@ const TransferProduct = () => {
   const transferProduct = async (e) => {
     e.preventDefault();
     setLoading(true);
-    if (productID && setProductId) {
+    if (productID) {
       try {
         await noFakeInstance.methods
-          .transferProduct(productID, newOwnerAddress)
+          .transferOwnerShip(productID, newOwnerAddress)
           .send({
             from: account,
           })
@@ -24,13 +25,14 @@ const TransferProduct = () => {
                 10
               )}...`
             );
+            toast.success("Product transfered successfuly");
             setProductId("");
             setNewOwnerAddress("");
           });
-        setLoading(true);
+        setLoading(false);
       } catch (error) {
         console.log(error);
-        setLoading(true);
+        setLoading(false);
       }
     }
   };

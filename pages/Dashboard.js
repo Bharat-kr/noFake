@@ -1,51 +1,40 @@
 import React, { useEffect, useState } from "react";
+import ProdCard from "../components/ProdCard";
 import { useWeb3 } from "../context/Web3Context";
 
 const Dashboard = () => {
   const { noFakeInstance } = useWeb3();
-  const [allProducts, setAllProducts] = useState([
-    { name: "bharat", type: "Mobiles" },
-    {
-      name: "keshav",
-    },
-  ]);
+  const [allProducts, setAllProducts] = useState([]);
   const [products, setProducts] = useState([]);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("");
   const [show, setShow] = useState(false);
 
   useEffect(() => {
-    if (filter) {
+    if (search) {
       setProducts(
         products.filter((item) => {
-          return (
-            item.name.toLowerCase().includes(search.toLowerCase()) &&
-            item.type === filter
-          );
+          return item.name.toLowerCase().includes(search.toLowerCase());
         })
       );
     } else {
-      setProducts(
-        products.filter((item) => {
-          return item.name.toLowerCase().includes(search.toLocaleLowerCase());
-        })
-      );
+      setProducts(allProducts);
     }
   }, [search, filter]);
-
-  console.log(products);
 
   useEffect(() => {
     const init = async () => {
       try {
         const p = await noFakeInstance.methods.getAllProducts().call();
-        setAllProducts(products);
+        console.log(p);
+        setAllProducts(p);
+        setProducts(p);
       } catch (error) {
         console.log(error);
       }
     };
     init();
-  }, []);
+  }, [noFakeInstance]);
   const changeFilter = (val) => {
     setFilter(val);
     setShow(false);
@@ -55,10 +44,10 @@ const Dashboard = () => {
     <div>
       <section className="flex flex-col m-2 ">
         {/* header section start here */}
-        <div className="flex justify-around w-full">
+        <div className="flex justify-around w-full items-center">
           <h1 className="w-full text-3xl font-bold">All Prodcuts</h1>
           <button
-            className="relative flex items-center justify-center w-full px-10 py-2 text-white transition-colors duration-200 transform bg-black rounded-md focus:outline-none sm:w-auto sm:mx-1 hover:bg-black focus:bg-black focus:ring focus:ring-black focus:ring-opacity-40"
+            className="relative flex items-center justify-center w-full px-0 md:px-8 py-2 text-white transition-colors duration-200 transform bg-black rounded-md h-fit focus:outline-none sm:w-auto sm:mx-1 hover:bg-black focus:bg-black focus:ring focus:ring-black focus:ring-opacity-40"
             onClick={() => {
               setShow((prev) => !prev);
             }}
@@ -79,11 +68,11 @@ const Dashboard = () => {
             </svg>
             <span className="mx-1">Filter</span>
             {show && (
-              <div className="absolute flex-col z-[10] right-0 top-12 bg-slate-900 rounded cursor-pointer w-full">
+              <div className="absolute flex-col z-[999] right-0 top-12 bg-slate-900 rounded cursor-pointer w-full">
                 <div
                   className="w-full text-center px-4 py-2 hover:bg-slate-500 rounded-t text-white"
                   onClick={() => {
-                    changeFilter("Mobiles");
+                    changeFilter("Mobile");
                   }}
                 >
                   Mobiles
@@ -91,7 +80,7 @@ const Dashboard = () => {
                 <div
                   className="w-full text-center px-4 py-2 hover:bg-slate-500 text-white"
                   onClick={() => {
-                    changeFilter("Laptops");
+                    changeFilter("Laptop");
                   }}
                 >
                   Laptops
@@ -99,7 +88,7 @@ const Dashboard = () => {
                 <div
                   className="w-full text-center px-4 py-2 hover:bg-slate-500 rounded-b text-white"
                   onClick={() => {
-                    changeFilter("TVs");
+                    changeFilter("TV");
                   }}
                 >
                   TVs
@@ -145,8 +134,11 @@ const Dashboard = () => {
           </div>
         </div>
         {/* search bar end here */}
-        {/* <div className="w-3/4"></div>
-          <div className="w-1/4"></div> */}
+        <div className="w-full flex flex-wrap">
+          {products.map((item) => {
+            return <ProdCard key={item.uuid} item={item} />;
+          })}
+        </div>
       </section>
     </div>
   );

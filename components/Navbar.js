@@ -7,20 +7,37 @@ const Navbar = () => {
   const router = useRouter();
 
   const { account, noFakeInstance, user, setUser } = useWeb3();
+
+  useEffect(() => {
+    if (noFakeInstance && !user?.phone_number) {
+      router.push("/");
+    }
+  }, [user]);
+
+  const logout = () => {
+    setUser({
+      name: "",
+      phone_number: "",
+      type: "",
+    });
+  };
+
   useEffect(() => {
     const init = async () => {
-      if (account && noFakeInstance) {
-        try {
-          const user = await noFakeInstance.methods.getCustomer(account).call();
-          setUser(user);
-          console.log(user);
-        } catch (error) {
-          console.log(error);
-        }
+      try {
+        const cuser = await noFakeInstance.methods.getUser(account).call();
+        setUser({
+          name: cuser["0"],
+          type: cuser["1"],
+          phone_number: cuser["2"],
+        });
+      } catch (error) {
+        console.log(error);
       }
     };
     init();
-  }, [account, noFakeInstance]);
+  }, [account]);
+
   return (
     <div className="flex flex-col w-64 h-screen py-8 bg-white border-r dark:bg-gray-800 dark:border-gray-600">
       <h2 className="text-3xl font-semibold text-center text-gray-800 dark:text-white">
@@ -33,7 +50,7 @@ const Navbar = () => {
           alt="avatar"
         />
         <h4 className="mx-2 mt-2 font-medium text-gray-800 dark:text-gray-200 hover:underline">
-          John Doe
+          {user?.name}
         </h4>
         <p className="mx-2 mt-1 text-sm font-medium text-gray-600 dark:text-gray-400 hover:underline w-36 turncate text-ellipsis overflow-hidden">
           {account}
@@ -66,7 +83,7 @@ const Navbar = () => {
               <span className="mx-4 font-medium">All Products</span>
             </div>
           </Link>
-          {/* {user?.type_of === "company" && ( */}
+          {user?.type === "company" && (
             <Link href="/addProduct">
               <div
                 className={`flex items-center justify-center px-4 py-2 my-2 ${
@@ -92,7 +109,7 @@ const Navbar = () => {
                 <span className="mx-4 font-medium">Add Product</span>
               </div>
             </Link>
-          {/* )} */}
+          )}
           <Link href="/transferProduct">
             <div
               className={`flex items-center justify-center px-4 py-2 my-2 ${
@@ -137,28 +154,27 @@ const Navbar = () => {
               <span className="mx-4 font-medium">Validate Product</span>
             </div>
           </Link>
-          <Link href="/">
-            <div
-              div
-              className="flex items-center justify-center px-4 py-2 text-gray-600 hover:text-red-500 cursor-pointer"
+          <div
+            div
+            className="flex items-center justify-center px-4 py-2 text-gray-600 hover:text-red-500 cursor-pointer"
+            onClick={logout}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth="2"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                />
-              </svg>
-              <span className="mx-4 font-medium">Logout</span>
-            </div>
-          </Link>
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+              />
+            </svg>
+            <span className="mx-4 font-medium">Logout</span>
+          </div>
         </nav>
       </div>
     </div>

@@ -131,8 +131,6 @@ contract NoFake {
         prod.isVerified = true;
         prod.owner = msg.sender;
         product_db[_product_uuid] = prod;
-    
-        return "You are not Authorized";
+        return "done";
     }
 }
-

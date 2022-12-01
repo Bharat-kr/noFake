@@ -3,18 +3,14 @@ import { HomepageSaver } from "../assests/HomepageSaver";
 import { useWeb3 } from "../context/Web3Context";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
 import Link from "next/link";
+import { userAgent } from "next/server";
+import { useEffect } from "react";
 
 export default function Home() {
-  const { account, setAccount, setConnecting, noFakeInstance } = useWeb3();
+  const { account, setAccount, setConnecting, noFakeInstance, setUser, user } =
+    useWeb3();
   const router = useRouter();
-
-  useEffect(() => {
-    if (account) {
-      router.push("/dashboard");
-    }
-  }, [account]);
 
   const getAccount = async (_event) => {
     setConnecting(true);
@@ -22,13 +18,23 @@ export default function Home() {
       const val = await ethereum.request({ method: "eth_requestAccounts" });
       if (val.length > 0) {
         setAccount(val[0]);
-        toast.success("Account Found");
+        const cuser = await noFakeInstance.methods.getUser(account).call();
+        setUser({
+          name: cuser["0"],
+          type: cuser["1"],
+          phone_number: cuser["2"],
+        });
+        if (cuser["2"]) {
+          router.push("/dashboard");
+        }
+        toast.success("Login Success");
       }
     } catch (error) {
       toast.error(error.message);
       setConnecting(false);
     }
   };
+
   return (
     <div className="body w-full h-screen">
       <Head>
@@ -59,19 +65,19 @@ export default function Home() {
         </div>
 
         <div className="w-44 md:w-32">
-          <div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+          <div className="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
             <input
               type="checkbox"
               name="toggle"
               id="toggle"
-              class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"
+              className="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"
             />
             <label
-              for="toggle"
-              class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"
+              htmlFor="toggle"
+              className="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"
             ></label>
           </div>
-          <label for="toggle" class="text-xs text-gray-700">
+          <label htmlFor="toggle" className="text-xs text-gray-700">
             Dark Mode
           </label>
         </div>

@@ -59,7 +59,6 @@ export const Web3Provider = ({ children }) => {
         const accounts = await ethereum.request({ method: "eth_accounts" });
         if (accounts.length > 0 && ethereum.isConnected()) {
           setAccount(accounts[0]);
-          toast.success("Account Found");
         }
       } catch (error) {
         console.error(error);
@@ -73,7 +72,7 @@ export const Web3Provider = ({ children }) => {
     if (web3) {
       var instance = new web3.eth.Contract(
         NoFakeFactory.abi,
-        "0x3893baf99DD131f5DA99978b30C603c9267E0612" //deployed factory code
+        "0x4424D189A9e91c0b8290e14850f3123fC258F8ed" //deployed factory code
       );
       console.log(instance);
       setNoFakeInstance(instance);

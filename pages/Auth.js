@@ -1,56 +1,53 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useWeb3 } from "../context/Web3Context";
-import { v4 as uuidv4 } from "uuid";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/router";
-import { id } from "ethers/lib/utils";
 
 const Auth = () => {
-  const { noFakeInstance, setAccount } = useWeb3();
+  const { noFakeInstance, setAccount, user } = useWeb3();
   const [name, setName] = useState("");
   const [naccount, setnAccount] = useState("");
   const [isCustomer, setIsCustomer] = useState("company");
   const [phoneNo, setPhoneNo] = useState("");
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    if (user && user?.phone_number) {
+      router.push("/dashboard");
+    }
+  }, []);
 
   const signUp = async (e) => {
     e.preventDefault();
 
+    setLoading(true);
     try {
       const val = await ethereum.request({ method: "eth_requestAccounts" });
       if (val.length > 0) {
         console.log(val[0], naccount);
-        if (isCustomer === "customer") {
-          await noFakeInstance.methods
-            .createCustomer(name, isCustomer, phoneNo, naccount, naccount)
-            .send({
-              from: naccount,
-            })
-            .on("receipt", function (receipt) {
-              setAccount(naccount);
-              toast.success(
-                `Transaction completed. ${receipt.transactionHash}`
-              );
-              router.push("/dashboard");
+        await noFakeInstance.methods
+          .createUser(name, isCustomer, phoneNo, naccount)
+          .send({
+            from: naccount,
+          })
+          .on("receipt", function (receipt) {
+            setAccount(naccount);
+            setUser({
+              name: name,
+              type: isCustomer,
+              phone_number: phoneNo,
             });
-        } else {
-          await noFakeInstance.methods
-            .createManufacturer(name, isCustomer, phoneNo, naccount, naccount)
-            .send({
-              from: naccount,
-            })
-            .on("receipt", function (receipt) {
-              setAccount(naccount);
-              toast.success(
-                `Transaction completed. ${receipt.transactionHash}`
-              );
-              router.push("/dashboard");
-            });
-        }
+            toast.success(`Transaction completed. ${receipt.transactionHash}`);
+            setLoading(false);
+            router.push("/dashboard");
+          });
       } else {
         toast.error("Enter correct Address");
+        setLoading(false);
       }
     } catch (error) {
+      setLoading(false);
       toast.error(error.message);
     }
   };
@@ -108,8 +105,9 @@ const Auth = () => {
             type="submit"
             className="w-full text-center py-3 rounded bg-slate-300 text-black hover:bg-green-dark focus:outline-none my-1"
             onClick={signUp}
+            disabled={loading}
           >
-            Create Account
+            {loading ? "Creating.." : "Create Account"}
           </button>
 
           {/* <div className="text-center text-sm text-grey-dark mt-4">

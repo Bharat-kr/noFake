@@ -1,16 +1,17 @@
 import React, { useState } from "react";
 import { useDropzone } from "react-dropzone";
+import toast from "react-hot-toast";
 import { v4 as uuidv4 } from "uuid";
 import { useWeb3 } from "../context/Web3Context";
 
 const AddProduct = () => {
-  const { acceptedFiles, getRootProps, getInputProps } = useDropzone();
+  const { getRootProps, getInputProps } = useDropzone();
 
   const { account, noFakeInstance } = useWeb3();
   const [name, setName] = useState("");
-  const [productNo, setProductNo] = useState("");
+  const [productNo, setProductNo] = useState(uuidv4());
   const [ownersAddress, setOwnersAddress] = useState("");
-  const [issuersAddress, setIssuersAddress] = useState("");
+  const [type, setType] = useState("");
   const [issuersName, setIssuersName] = useState("");
   const [country, setCountry] = useState("US");
   const [loading, setLoading] = useState(false);
@@ -20,14 +21,23 @@ const AddProduct = () => {
     setLoading(true);
     try {
       await noFakeInstance.methods
-        .registerProduct(uuidv4(), name, ownersAddress, type, true)
+        .registerProduct(
+          uuidv4(),
+          name,
+          ownersAddress,
+          ownersAddress,
+          account,
+          type,
+          issuersName,
+          country
+        )
         .send({
           from: account,
         })
         .on("receipt", function (receipt) {
-          toast.success(
-            `Transaction completed. ${receipt.transactionHash.slice(0, 10)}...`
-          );
+          // toast.success(
+          //   `Transaction completed. ${receipt.transactionHash.slice(0, 10)}...`
+          // );
           setName("");
           setProductNo("");
           setIssuersAddress("");
@@ -35,6 +45,7 @@ const AddProduct = () => {
           setIssuersName("");
           setCountry("");
         });
+      toast.success("Product Added");
       setLoading(false);
     } catch (error) {
       setLoading(false);
@@ -121,18 +132,22 @@ const AddProduct = () => {
               htmlFor="issuersAddress"
               className="leading-7 text-md text-gray-600"
             >
-              Issuers Address
+              Product Type
             </label>
-            <input
-              type="text"
-              id="issuersAddress"
-              name="issuersAddress"
-              value={issuersAddress}
+            <select
+              id="countries"
+              value={type}
               onChange={(e) => {
-                setIssuersAddress(e.target.value);
+                setType(e.target.value);
               }}
-              className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
-            />
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+            >
+              <option selected>Choose a category</option>
+
+              <option value="Mobile">Mobile</option>
+              <option value="TV">TV</option>
+              <option value="Laptop">Laptop</option>
+            </select>
           </div>
         </div>
 
@@ -162,7 +177,7 @@ const AddProduct = () => {
                 hhtmlFor="countries"
                 className="leading-7 text-md text-gray-600"
               >
-                Select an option
+                Country
               </label>
               <select
                 id="countries"
@@ -181,7 +196,7 @@ const AddProduct = () => {
             </div>
           </div>
         </div>
-        <span className="leading-7 text-md text-gray-600">
+        {/* <span className="leading-7 text-md text-gray-600">
           Upload Certificates and Images
         </span>
         <section className="container w-full h-40 my-3 rounded-lg hover:border-dotted hover:border-teal-400 hover:border-4 text-gray-500 text-center bg-slate-100 flex justify-center items-center">
@@ -207,7 +222,7 @@ const AddProduct = () => {
               />
             </svg>
           </div>
-        </section>
+        </section> */}
         <button
           type="submit"
           className="bg-black rounded-lg text-white hover:bg-gray-800 hover:text-grey-600 py-4 w-full flex justify-center items-center"
